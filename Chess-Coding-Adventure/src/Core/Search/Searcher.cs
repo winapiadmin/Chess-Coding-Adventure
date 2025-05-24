@@ -55,7 +55,8 @@
 			moveGenerator.promotionsToGenerate = MoveGenerator.PromotionMode.QueenAndKnight;
 
 			// Run a depth 1 search so that JIT doesn't run during actual search (and mess up timing stats in editor)
-			Search(1, 0, negativeInfinity, positiveInfinity);
+						
+			//Search(1, 0, negativeInfinity, positiveInfinity);
 		}
 
 		public void StartSearch()
@@ -103,6 +104,25 @@
 				searchIterationTimer.Restart();
 				currentIterationDepth = searchDepth;
 				Search(searchDepth, 0, negativeInfinity, positiveInfinity);
+
+Console.Write("info depth {0} score ", searchDiagnostics.numCompletedIterations);
+
+if (IsMateScore(searchDiagnostics.eval))
+{
+    Console.Write("mate {0} ", NumPlyToMateFromScore(searchDiagnostics.eval));
+}
+else
+{
+    Console.Write("cp {0} ", searchDiagnostics.eval);
+}
+
+long elapsedMs = searchTotalTimer.ElapsedMilliseconds;
+long nps = elapsedMs > 0 ? searchDiagnostics.numPositionsEvaluated * 1000 / elapsedMs : 0;
+
+Console.Write("time {0} nodes {1} nps {2} pv {3}\n",
+    elapsedMs,
+    searchDiagnostics.numPositionsEvaluated,
+    nps, MoveUtility.GetMoveNameUCI(bestMoveThisIteration));
 
 				if (searchCancelled)
 				{
