@@ -10,7 +10,7 @@ namespace CodingAdventureBot;
 public class Bot
 {
 	// # Settings
-	const bool useOpeningBook = true;
+	const bool useOpeningBook = false;
 	const int maxBookPly = 16;
 	// Limit the amount of time the bot can spend per move (mainly for
 	// games against human opponents, so not boring to play against).
@@ -68,10 +68,11 @@ public class Bot
 		// Get a fraction of remaining time to use for current move
 		double thinkTimeMs = myTimeRemainingMs / 40.0;
 		// Clamp think time if a maximum limit is imposed
+		/*//unreachable code
 		if (useMaxThinkTime)
 		{
 			thinkTimeMs = Min(maxThinkTimeMs, thinkTimeMs);
-		}
+		}*/
 		// Add increment
 		if (myTimeRemainingMs > myIncrementMs * 2)
 		{
@@ -166,6 +167,7 @@ public class Bot
 		if (useOpeningBook && board.PlyCount <= maxBookPly && book.TryGetBookMove(board, out string moveString))
 		{
 			bookMove = MoveUtility.GetMoveFromUCIName(moveString, board);
+			System.Console.WriteLine("info depth 1 score cp 0 time 0 nodes 0 nps 1000 pv {0}", moveString);
 			return true;
 		}
 		bookMove = Move.NullMove;
