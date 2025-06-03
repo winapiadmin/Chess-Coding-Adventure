@@ -24,6 +24,7 @@
 		int bestEvalThisIteration;
 		Move bestMove;
 		int bestEval;
+		int seldepth; // The maximum depth searched in the current search iteration
 		bool hasSearchedAtLeastOneMove;
 		bool searchCancelled;
 
@@ -105,7 +106,7 @@
 				currentIterationDepth = searchDepth;
 				Search(searchDepth, 0, negativeInfinity, positiveInfinity);
 
-				Console.Write("info depth {0} score ", searchDiagnostics.numCompletedIterations);
+				Console.Write("info depth {0} seldepth {1} score ", searchDiagnostics.numCompletedIterations, seldepth);
 
 				if (IsMateScore(searchDiagnostics.eval))
 				{
@@ -182,6 +183,7 @@
 
 		int Search(int plyRemaining, int plyFromRoot, int alpha, int beta, int numExtensions = 0, Move prevMove = default, bool prevWasCapture = false)
 		{
+			seldepth = seldepth<plyFromRoot?plyFromRoot:seldepth;
 			if (searchCancelled)
 			{
 				return 0;
@@ -280,7 +282,7 @@
 					{
 						extension = 1;
 					}
-					else if (movedPieceType == Piece.Pawn && (targetRank == 1 || targetRank == 6))
+					if (movedPieceType == Piece.Pawn && (targetRank == 1 || targetRank == 6))
 					{
 						extension = 1;
 					}
@@ -364,8 +366,9 @@
 		}
 
 		// Search capture moves until a 'quiet' position is reached.
-		int QuiescenceSearch(int alpha, int beta)
+		int QuiescenceSearch(int alpha, int beta, int plyFromRoot=0)
 		{
+			seldepth = seldepth<plyFromRoot?plyFromRoot:seldepth;
 			if (searchCancelled)
 			{
 				return 0;
@@ -391,7 +394,7 @@
 			for (int i = 0; i < moves.Length; i++)
 			{
 				board.MakeMove(moves[i], true);
-				eval = -QuiescenceSearch(-beta, -alpha);
+				eval = -QuiescenceSearch(-beta, -alpha, plyFromRoot+1);
 				board.UnmakeMove(moves[i], true);
 
 				if (eval >= beta)

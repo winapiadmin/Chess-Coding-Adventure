@@ -10,7 +10,7 @@ namespace CodingAdventureBot;
 public class Bot
 {
 	// # Settings
-	const bool useOpeningBook = false;
+	const bool useOpeningBook = true;
 	const int maxBookPly = 16;
 	// Limit the amount of time the bot can spend per move (mainly for
 	// games against human opponents, so not boring to play against).
